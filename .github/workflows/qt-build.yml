@@ -1,4 +1,4 @@
-name: QT Build
+name: QT Build (v2)
 
 on: [push]
 
