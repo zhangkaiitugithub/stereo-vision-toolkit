@@ -1,4 +1,7 @@
 # Stereo Vision Toolkit
+## I3DR Stereo Vision SDK integration branch
+This branch is for replacing the backend of SVTK with I3DR's Stereo Vision SDK  
+**WARNING: This branch is in active development and will likely be broken!**
 
 [Software Website](https://i3drobotics.github.io/stereo-vision-toolkit/)
 

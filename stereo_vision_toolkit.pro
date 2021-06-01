@@ -54,22 +54,6 @@ FV_APP_NAME = $$TARGET
 DEFINES += WITH_CUDA
 DEFINES += WITH_OPENCV_CONTRIB
 
-# To use I3DRSGM
-# add 'CONFIG+=WITH_I3DRSGM' to build arguments
-WITH_I3DRSGM {
-    message("I3DRSGM enabled")
-    DEFINES += WITH_I3DRSGM
-}
-
-# To use Vimbda camera API (currently optional while being implimented)
-# add 'CONFIG+=WITH_VIMBA' to build arguments
-# Vimba remains optional as there is an issue with debugging when enabled
-# so it is useful to be able to turn it off for debug build
-WITH_VIMBA {
-    message("VIMBA enabled")
-    DEFINES += WITH_VIMBA
-}
-
 # Define resources
 RC_FILE = $$_PRO_FILE_PWD_/resources/icon.rc
 RESOURCES += \
@@ -108,10 +92,8 @@ INCLUDEPATH += $$_PRO_FILE_PWD_/src/camera/virtualcam
 INCLUDEPATH += $$_PRO_FILE_PWD_/src/camera/cameracontrol
 INCLUDEPATH += $$_PRO_FILE_PWD_/src/detection
 
-WITH_VIMBA {
-    VPATH += $$_PRO_FILE_PWD_/src/camera/vimba
-    INCLUDEPATH += $$_PRO_FILE_PWD_/src/camera/vimba
-}
+VPATH += $$_PRO_FILE_PWD_/src/camera/vimba
+INCLUDEPATH += $$_PRO_FILE_PWD_/src/camera/vimba
 
 # Define source files
 SOURCES += \
@@ -155,17 +137,13 @@ win32 {
     SOURCES += stereocameradeimos.cpp
 }
 # Optional vimba source files
-WITH_VIMBA {
-    SOURCES += \
-        camera/cameravimba.cpp \
-        stereocameravimba.cpp
-}
+SOURCES += \
+    camera/cameravimba.cpp \
+    stereocameravimba.cpp
 # Optional I3RSGM matcher source files
-WITH_I3DRSGM {
-    SOURCES += \
-        matcherwidgeti3drsgm.cpp \
-        matcheri3drsgm.cpp
-}
+SOURCES += \
+    matcherwidgeti3drsgm.cpp \
+    matcheri3drsgm.cpp
 
 # Define header files
 HEADERS += \
@@ -215,17 +193,13 @@ win32 {
     HEADERS += stereocameradeimos.h
 }
 # Optional vimba header files
-WITH_VIMBA {
-    HEADERS += \
-        camera/cameravimba.h \
-        stereocameravimba.h
-}
+HEADERS += \
+    camera/cameravimba.h \
+    stereocameravimba.h
 # Optional I3DRSGM matcher header files
-WITH_I3DRSGM {
-    HEADERS += \
-        matcherwidgeti3drsgm.h \
-        matcheri3drsgm.h
-}
+HEADERS += \
+    matcherwidgeti3drsgm.h \
+    matcheri3drsgm.h
 # Define application window forms
 FORMS += \
     src/camera/widgets/loadstereoimagepairdialog.ui \
@@ -241,9 +215,7 @@ FORMS += \
     aboutdialog.ui \
     detectorsetupdialog.ui
 # Optional I3DRSGM window form
-WITH_I3DRSGM {
-    FORMS += matcherwidgeti3drsgm.ui
-}
+FORMS += matcherwidgeti3drsgm.ui
 
 # For building in a release and debug in seperate folders
 CONFIG(debug, debug|release) { #debug
@@ -318,20 +290,16 @@ CONFIG(debug, debug|release) {
 LIBS += -lvtkCommonCore-7.0 -lvtkCommonDataModel-7.0 -lvtkGUISupportQt-7.0 -lvtkViewsQt-7.0 -lvtkViewsCore-7.0 -lvtkRenderingQt-7.0  -lvtkCommonMath-7.0 -lvtkRenderingCore-7.0 -lvtkIOCore-7.0
 LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/boost-1.66.0/boost_1_66_0/stage/lib"
 
-WITH_VIMBA {
-    # Vimba library and include files
-    INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/vimba/"
-    LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Lib/Win64/" -lVimbaCPP
-}
+# Vimba library and include files
+INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/vimba/"
+LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Lib/Win64/" -lVimbaCPP
 
-WITH_I3DRSGM {
-    # I3DRSGM library and include files
-    LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/" -lI3DRSGM
-    INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/include"
-    # PhobosIntegration library and include files (required for I3DRSGM)
-    LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/lib/PhobosIntegration" -lPhobosIntegration
-    INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/include"
-}
+# I3DRSGM library and include files
+LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/" -lI3DRSGM
+INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/include"
+# PhobosIntegration library and include files (required for I3DRSGM)
+LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/lib/PhobosIntegration" -lPhobosIntegration
+INCLUDEPATH += "$$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/include"
 
 # Basler library files
 LIBS += -L"$$_PRO_FILE_PWD_/3rdparty/pylon/lib/x64"
@@ -405,32 +373,28 @@ win32 {
     EXTRA_FILES += $$files($$_PRO_FILE_PWD_/3rdparty/pylon/drivers/*.bat, true)
 
     # I3DRSGM dlls
-    WITH_I3DRSGM {
-        EXTRA_FILES += \
-            $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/*.dll, true) \
-            $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/*.param, true) \
-            $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/bin/*.dll, true)
-    }
+    EXTRA_FILES += \
+        $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/*.dll, true) \
+        $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/i3drsgm-1.0.13/lib/*.param, true) \
+        $$files($$_PRO_FILE_PWD_/3rdparty/i3drsgm/i3drsgm/phobosIntegration-1.0.54/bin/*.dll, true)
 
     # Vimba dlls
-    WITH_VIMBA {
-        EXTRA_FILES += \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaC/Bin/Win64/VimbaC.dll \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/clallserial.dll \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/VimbaCLConfigTL.cti \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/VimbaCLConfigTL.xml \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaUSBTL/Bin/Win64/VimbaUSBTL.cti \
-            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaUSBTL/Bin/Win64/VimbaUSBTL.xml \
+    EXTRA_FILES += \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaC/Bin/Win64/VimbaC.dll \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/clallserial.dll \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/VimbaCLConfigTL.cti \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCLConfigTL/Bin/Win64/VimbaCLConfigTL.xml \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaUSBTL/Bin/Win64/VimbaUSBTL.cti \
+        $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaUSBTL/Bin/Win64/VimbaUSBTL.xml \
 
-        CONFIG( debug, debug|release ) {
-            # Debug only dlls
-            # TODO find out why CPP is needed with CPPd (causing debug issues)
-            EXTRA_FILES += \
-                $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPP.dll \
-                $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPPd.dll
-        } else {
-            EXTRA_FILES += $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPP.dll
-        }
+    CONFIG( debug, debug|release ) {
+        # Debug only dlls
+        # TODO find out why CPP is needed with CPPd (causing debug issues)
+        EXTRA_FILES += \
+            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPP.dll \
+            $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPPd.dll
+    } else {
+        EXTRA_FILES += $$_PRO_FILE_PWD_/3rdparty/vimba/VimbaCPP/Bin/Win64/VimbaCPP.dll
     }
 }
 
