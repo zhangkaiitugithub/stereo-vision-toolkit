@@ -3,13 +3,14 @@
 * Author: Ben Knight (bknight@i3drobotics.com)
 */
 
-#define PHOBOS_USB_TRIGGER_1 2
-#define PHOBOS_USB_TRIGGER_2 2
+#define PHOBOS_USB_TRIGGER_1 5
+#define PHOBOS_USB_TRIGGER_2 6
+
 
 #define PHOBOS_GIGE_TRIGGER_1 3
 #define PHOBOS_GIGE_TRIGGER_2 2
 
-#define TITANIA_USB_TRIGGER_1 1
+#define TITANIA_USB_TRIGGER_1 0
 #define TITANIA_USB_TRIGGER_2 3
 
 //Choose trigger pins based on the camera being used
@@ -27,10 +28,20 @@
   //Setup imu device
   Adafruit_BNO055 bno = Adafruit_BNO055(55);
 #endif
+//Comment out line when not using the LED
+#define USE_LED
+#ifdef USE_LED
+  #define LED_PIN 2
+#endif
+//Comment out line when not using the laser
+#define USE_LASER
+#ifdef USE_LASER
+  #define LASER_PIN 1
+#endif
 
 double frame_delay;      // amount of time between triggered (1/fps)
 int trigger_time = 10;   // time for trigger to be registered by camera
-double fps = 5;          // inital fps
+double fps = 10;          // inital fps
 String inString = "";    // string to hold input
 unsigned long lastTriggerTime = 0;
 unsigned long timeSinceTrigger;
@@ -52,11 +63,21 @@ void setup() {
       imuInit = true;
     }
   #endif
+  #ifdef USE_LED
+    pinMode(LED_PIN, OUTPUT);
+  #endif
+  #ifdef USE_LASER
+    pinMode(LASER_PIN, OUTPUT);
+  #endif
   pinMode(CAMERA_TRIGGER_1, OUTPUT);
   pinMode(CAMERA_TRIGGER_2, OUTPUT);
   pinMode(LED_BUILTIN,OUTPUT);
   
   lastTriggerTime = millis();
+
+  #ifdef USE_LED
+    digitalWrite(LED_PIN, LOW);
+  #endif
 }
 
 void loop() {
@@ -69,11 +90,18 @@ void loop() {
   if (timeSinceTrigger > frame_delay){
     // Triggger camera (pulse high and then low
     digitalWrite(LED_BUILTIN, HIGH);
+    #ifdef USE_LASER
+      digitalWrite(LASER_PIN, LOW);
+    #endif
     digitalWrite(CAMERA_TRIGGER_1, HIGH);
     digitalWrite(CAMERA_TRIGGER_2, HIGH);
     lastTriggerTime = millis();
-    delay(trigger_time); // Wait small time for high to be registered by camera
+    delay(trigger_time*8.0); // Wait small time for high to be registered by camera
     digitalWrite(LED_BUILTIN, LOW);
+    #ifdef USE_LASER
+      digitalWrite(LASER_PIN, HIGH);
+    #endif
+    delay(trigger_time*0.2);
     digitalWrite(CAMERA_TRIGGER_1, LOW);
     digitalWrite(CAMERA_TRIGGER_2, LOW);
   }
